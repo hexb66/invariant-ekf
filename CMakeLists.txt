@@ -1,5 +1,5 @@
 # Specify the minimum version for CMake
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0)
 # Project's name
 project(inekf)
 
@@ -18,7 +18,7 @@ endif (USE_MUTEX AND NOT USE_CPP11)
 if (USE_CPP11)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif(USE_CPP11)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DEIGEN_NO_DEBUG -march=native -Wl,--no-as-needed")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DEIGEN_NO_DEBUG -march=native -Wl,--no-as-needed")
 if (USE_MUTEX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DINEKF_USE_MUTEX=true")
 else (USE_MUTEX)
@@ -43,9 +43,9 @@ include_directories("${PROJECT_SOURCE_DIR}/include/")
 find_package (Threads)
 
 # Boost
-find_package(Boost 1.57 REQUIRED COMPONENTS system)
-include_directories(${Boost_INCLUDE_DIR})
-message("Boost_INCLUDE_DIR: " ${Boost_INCLUDE_DIR})
+# find_package(Boost 1.57 REQUIRED COMPONENTS system)
+# include_directories(${Boost_INCLUDE_DIR})
+# message("Boost_INCLUDE_DIR: " ${Boost_INCLUDE_DIR})
 
 # Eigen 
 find_package(Eigen3 REQUIRED)
@@ -62,18 +62,19 @@ file(GLOB src_files
 ######################
 link_directories(${PROJECT_SOURCE_DIR}/${Boost_LIBRARY_DIRS})
 
-add_executable(landmarks ${PROJECT_SOURCE_DIR}/src/examples/landmarks.cpp ${src_files})
-add_executable(kinematics ${PROJECT_SOURCE_DIR}/src/examples/kinematics.cpp ${src_files})
-add_executable(propagation_speed ${PROJECT_SOURCE_DIR}/src/tests/propagation_speed.cpp ${src_files})
-add_executable(correction_speed ${PROJECT_SOURCE_DIR}/src/tests/correction_speed.cpp ${src_files})
+# add_executable(landmarks ${PROJECT_SOURCE_DIR}/src/examples/landmarks.cpp ${src_files})
+# add_executable(kinematics ${PROJECT_SOURCE_DIR}/src/examples/kinematics.cpp ${src_files})
+# add_executable(propagation_speed ${PROJECT_SOURCE_DIR}/src/tests/propagation_speed.cpp ${src_files})
+# add_executable(correction_speed ${PROJECT_SOURCE_DIR}/src/tests/correction_speed.cpp ${src_files})
 
-target_link_libraries(landmarks ${Boost_LIBRARIES})
-target_link_libraries(kinematics ${Boost_LIBRARIES})
-target_link_libraries(propagation_speed ${Boost_LIBRARIES})
-target_link_libraries(correction_speed ${Boost_LIBRARIES})
+# target_link_libraries(landmarks ${Boost_LIBRARIES})
+# target_link_libraries(kinematics ${Boost_LIBRARIES})
+# target_link_libraries(propagation_speed ${Boost_LIBRARIES})
+# target_link_libraries(correction_speed ${Boost_LIBRARIES})
 
 # Create Library
-add_library(inekf SHARED
+# add_library(inekf SHARED
+add_library(inekf STATIC
     "${PROJECT_SOURCE_DIR}/src/InEKF.cpp"
     "${PROJECT_SOURCE_DIR}/src/RobotState.cpp"
     "${PROJECT_SOURCE_DIR}/src/LieGroup.cpp"
@@ -95,36 +96,43 @@ set_target_properties(inekf PROPERTIES LIBRARY_OUTPUT_NAME inekf)
 
 # NOTE: the following will support find_package for 1) local build (make) and 2) for installed files (make install)
 
-# 1- local build #
+# # 1- local build #
 
-# Register the local build in case one doesn't use "make install"
-export(PACKAGE inekf)
+# # Register the local build in case one doesn't use "make install"
+# export(PACKAGE inekf)
 
-# Create variable for the local build tree
-#set_target_properties(inekf PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-get_property(inekf_include_dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-get_property(inekf_library_dirs TARGET inekf PROPERTY LIBRARY_OUTPUT_DIRECTORY)
-get_property(inekf_libraries TARGET inekf PROPERTY LIBRARY_OUTPUT_NAME)
+# # Create variable for the local build tree
+# #set_target_properties(inekf PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+# get_property(inekf_include_dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+# get_property(inekf_library_dirs TARGET inekf PROPERTY LIBRARY_OUTPUT_DIRECTORY)
+# get_property(inekf_libraries TARGET inekf PROPERTY LIBRARY_OUTPUT_NAME)
 
-message("inekf_include_dirs: " ${inekf_include_dirs})
-message("inekf_library_dirs: " ${inekf_library_dirs})
-message("inekf_libraries: " ${inekf_libraries})
+# message("inekf_include_dirs: " ${inekf_include_dirs})
+# message("inekf_library_dirs: " ${inekf_library_dirs})
+# message("inekf_libraries: " ${inekf_libraries})
 
-# Configure config file for local build tree
-configure_file(inekfConfig.cmake.in
-  "${PROJECT_BINARY_DIR}/inekfConfig.cmake" @ONLY)
-
-message("PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR})
-
-# # 2- installation build #
-
-# # Change the include location for the case of an install location
-# set(inekf_include_dirs ${CMAKE_INSTALL_PREFIX}/include ${EIGEN_INCLUDE_DIR})
-
-# # We put the generated file for installation in a different repository (i.e., ./CMakeFiles/)
+# # Configure config file for local build tree
 # configure_file(inekfConfig.cmake.in
-#   "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/inekfConfig.cmake" @ONLY)
+#   "${PROJECT_BINARY_DIR}/inekfConfig.cmake" @ONLY)
 
-# install(FILES
-#   "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/inekfConfig.cmake"
-#   DESTINATION share/inekf/cmake COMPONENT dev)
+# message("PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR})
+
+# 2- installation build #
+set(CMAKE_INSTALL_PREFIX f:/usr/local)
+# Change the include location for the case of an install location
+set(inekf_include_dirs ${CMAKE_INSTALL_PREFIX}/include ${EIGEN_INCLUDE_DIR})
+set(inekf_library_dirs ${CMAKE_INSTALL_PREFIX}/lib/inekf)
+set(inekf_libraries inekf.lib)
+
+
+# We put the generated file for installation in a different repository (i.e., ./CMakeFiles/)
+configure_file(inekfConfig.cmake.in
+  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/inekfConfig.cmake" @ONLY)
+
+install(FILES
+  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/inekfConfig.cmake"
+  DESTINATION share/inekf/cmake COMPONENT dev)
+
+install(FILES
+    "${PROJECT_BINARY_DIR}/Release/inekf.lib"
+    DESTINATION lib/inekf COMPONENT dev)
