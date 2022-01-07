@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.0)
 # Project's name
 project(inekf)
-
+add_compile_options(/MT)
 option(USE_CPP11 "Use flag -std=c++11" ON)
 option(USE_MUTEX "Use mutex in code" OFF)
 
