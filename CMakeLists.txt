@@ -3,32 +3,6 @@ cmake_minimum_required(VERSION 3.0)
 # Project's name
 project(inekf)
 add_compile_options(/MT)
-option(USE_CPP11 "Use flag -std=c++11" ON)
-option(USE_MUTEX "Use mutex in code" OFF)
-
-message("USE_CPP11: " ${USE_CPP11})
-message("USE_MUTEX: " ${USE_MUTEX})
-
-if (USE_MUTEX AND NOT USE_CPP11)
-message("test")
-    message(FATAL_ERROR "You cannot have USE_CPP11 = OFF AND USE_MUTEX = ON")
-endif (USE_MUTEX AND NOT USE_CPP11)
-
-# Set compiler flags
-if (USE_CPP11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-endif(USE_CPP11)
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DEIGEN_NO_DEBUG -march=native -Wl,--no-as-needed")
-if (USE_MUTEX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DINEKF_USE_MUTEX=true")
-else (USE_MUTEX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DINEKF_USE_MUTEX=false")
-endif(USE_MUTEX)
-SET(CMAKE_CXX_COMPILER /usr/bin/g++)
-
-message("CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
-unset(USE_CPP11)
-unset(USE_MUTEX)
 
 # Set the output folder where your program will be created  
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
@@ -40,7 +14,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 include_directories("${PROJECT_SOURCE_DIR}/include/")
 
 # Threading
-find_package (Threads)
+# find_package (Threads)
 
 # Boost
 # find_package(Boost 1.57 REQUIRED COMPONENTS system)
@@ -60,7 +34,7 @@ file(GLOB src_files
 ######################
 #  Add Execuatables  #
 ######################
-link_directories(${PROJECT_SOURCE_DIR}/${Boost_LIBRARY_DIRS})
+# link_directories(${PROJECT_SOURCE_DIR}/${Boost_LIBRARY_DIRS})
 
 # add_executable(landmarks ${PROJECT_SOURCE_DIR}/src/examples/landmarks.cpp ${src_files})
 # add_executable(kinematics ${PROJECT_SOURCE_DIR}/src/examples/kinematics.cpp ${src_files})
@@ -118,7 +92,7 @@ set_target_properties(inekf PROPERTIES LIBRARY_OUTPUT_NAME inekf)
 # message("PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR})
 
 # 2- installation build #
-set(CMAKE_INSTALL_PREFIX f:/usr/local)
+set(CMAKE_INSTALL_PREFIX CMAKE_PREFIX_PATH)
 # Change the include location for the case of an install location
 set(inekf_include_dirs ${CMAKE_INSTALL_PREFIX}/include ${EIGEN_INCLUDE_DIR})
 set(inekf_library_dirs ${CMAKE_INSTALL_PREFIX}/lib/inekf)
