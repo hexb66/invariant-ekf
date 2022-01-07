@@ -92,7 +92,7 @@ set_target_properties(inekf PROPERTIES LIBRARY_OUTPUT_NAME inekf)
 # message("PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR})
 
 # 2- installation build #
-set(CMAKE_INSTALL_PREFIX CMAKE_PREFIX_PATH)
+set(CMAKE_INSTALL_PREFIX f:/install_libs)
 # Change the include location for the case of an install location
 set(inekf_include_dirs ${CMAKE_INSTALL_PREFIX}/include ${EIGEN_INCLUDE_DIR})
 set(inekf_library_dirs ${CMAKE_INSTALL_PREFIX}/lib/inekf)
@@ -110,3 +110,9 @@ install(FILES
 install(FILES
     "${PROJECT_BINARY_DIR}/Release/inekf.lib"
     DESTINATION lib/inekf COMPONENT dev)
+
+file(GLOB INCLUDE_FILES include/*.h)
+install(FILES
+    ${INCLUDE_FILES}
+    DESTINATION include/inekf COMPONENT dev)
+
