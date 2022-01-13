@@ -21,6 +21,10 @@
 #include <mutex>
 #endif
 #include <algorithm>
+#include <assert.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
 #include "RobotState.h"
 #include "NoiseParams.h"
 #include "LieGroup.h"
@@ -69,6 +73,44 @@ class Observation {
         friend std::ostream& operator<<(std::ostream& os, const Observation& o);  
 };
 
+class KMeans
+{
+public:
+	enum InitMode
+	{
+		InitRandom,
+		InitManual,
+		InitUniform,
+	};
+
+	KMeans(int dimNum = 1, int clusterNum = 1);
+	~KMeans();
+
+	void SetMean(int i, const double* u) { memcpy(m_means[i], u, sizeof(double) * m_dimNum); }
+	void SetInitMode(int i) { m_initMode = i; }
+	void SetMaxIterNum(int i) { m_maxIterNum = i; }
+	void SetEndError(double f) { m_endError = f; }
+
+	double* GetMean(int i) { return m_means[i]; }
+	int GetInitMode() { return m_initMode; }
+	int GetMaxIterNum() { return m_maxIterNum; }
+	double GetEndError() { return m_endError; }
+
+	void Init(const std::vector<std::vector<double>>& data);
+	void Cluster(const std::vector<std::vector<double>>& data, std::vector<int>& Label);
+	friend std::ostream& operator<<(std::ostream& out, KMeans& kmeans);
+	double GetLabel(const double* x, int* label);
+	double CalcDistance(const double* x, const double* u, int dimNum);
+
+private:
+	int m_dimNum;
+	int m_clusterNum;
+	double** m_means;
+
+	int m_initMode;
+	int m_maxIterNum;		
+	double m_endError;		
+};
 
 class InEKF {
     
