@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.0)
 project(inekf)
 add_compile_options(/MT)
 
+set(CMAKE_PREFIX_PATH d:/usr/local)
+
 # Set the output folder where your program will be created  
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
@@ -92,7 +94,7 @@ set_target_properties(inekf PROPERTIES LIBRARY_OUTPUT_NAME inekf)
 # message("PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR})
 
 # 2- installation build #
-set(CMAKE_INSTALL_PREFIX f:/install_libs)
+set(CMAKE_INSTALL_PREFIX d:/usr/local)
 # Change the include location for the case of an install location
 set(inekf_include_dirs ${CMAKE_INSTALL_PREFIX}/include ${EIGEN_INCLUDE_DIR})
 set(inekf_library_dirs ${CMAKE_INSTALL_PREFIX}/lib/inekf)

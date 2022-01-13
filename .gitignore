@@ -42,3 +42,4 @@ slprj/
 bin/
 build/
 
+.vscode/
